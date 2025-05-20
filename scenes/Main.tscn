@@ -1,0 +1,26 @@
+[gd_scene load_steps=4 format=3 uid="uid://b7ab0xgoj4vr2"]
+
+[ext_resource type="PackedScene" uid="uid://b3xmmx831sytx" path="res://scenes/player.tscn" id="1_cmeu8"]
+[ext_resource type="PackedScene" path="res://scenes/ui_layer.tscn" id="2_phdkc"]
+[ext_resource type="Script" uid="uid://csde7o8idmgmw" path="res://scripts/test_damage.gd" id="3_q4lgl"]
+
+[node name="Main" type="Node2D"]
+script = ExtResource("3_q4lgl")
+player_path = NodePath("charctar20")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(582, 362)
+zoom = Vector2(4, 4)
+
+[node name="charctar20" parent="." instance=ExtResource("1_cmeu8")]
+position = Vector2(582, 362)
+
+[node name="UI_Layer" parent="." instance=ExtResource("2_phdkc")]
+
+[node name="VBoxContainer" parent="UI_Layer/MarginContainer" index="0"]
+size_flags_horizontal = 1
+
+[node name="HealthBar" parent="UI_Layer/MarginContainer/VBoxContainer/HBoxContainer" index="1"]
+player_path = NodePath("../../../../../charctar20")
+
+[editable path="UI_Layer"]
