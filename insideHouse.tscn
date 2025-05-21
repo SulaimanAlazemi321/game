@@ -1,7 +1,8 @@
-[gd_scene load_steps=8 format=4 uid="uid://dlr5362jjr4s8"]
+[gd_scene load_steps=9 format=4 uid="uid://dlr5362jjr4s8"]
 
 [ext_resource type="Texture2D" uid="uid://4po1ot4cmxjp" path="res://assets/PNG/Interior.png" id="1_ep3vs"]
 [ext_resource type="PackedScene" uid="uid://b3xmmx831sytx" path="res://scenes/player.tscn" id="2_y46xm"]
+[ext_resource type="Script" uid="uid://cqe5swhs1t2f4" path="res://scripts/exit_house.gd" id="3_y46xm"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_y46xm"]
 
@@ -271,10 +272,10 @@ tile_set = SubResource("TileSet_yfc1i")
 
 [node name="player" parent="." instance=ExtResource("2_y46xm")]
 z_index = 2
-position = Vector2(124, 173)
+position = Vector2(168, 139)
 
 [node name="Camera2D" type="Camera2D" parent="player"]
-zoom = Vector2(5, 5)
+zoom = Vector2(4, 4)
 
 [node name="DirectionalLight2D" type="DirectionalLight2D" parent="."]
 color = Color(0, 0, 0, 1)
@@ -311,3 +312,15 @@ shape = SubResource("RectangleShape2D_yfc1i")
 [node name="CollisionShape2D4" type="CollisionShape2D" parent="StaticBody2D"]
 position = Vector2(227.75, 206)
 shape = SubResource("RectangleShape2D_yfc1i")
+
+[node name="CollisionPolygon2D2" type="CollisionPolygon2D" parent="StaticBody2D"]
+position = Vector2(6, -3)
+polygon = PackedVector2Array(83, 194, 105, 192, 129, 192, 157, 193, 163, 219, 165, 217, 157, 215, 181, 216, 178, 253, 73, 253, 72, 215)
+
+[node name="exitHouse" type="Area2D" parent="."]
+script = ExtResource("3_y46xm")
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="exitHouse"]
+position = Vector2(126, 208)
+scale = Vector2(1.9375, 2.625)
+polygon = PackedVector2Array(-20, -10, 20, -10, 20, 10, 1.03226, 10.6667, -20, 10)
