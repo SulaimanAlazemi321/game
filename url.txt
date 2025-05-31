@@ -1,0 +1,12 @@
+https://google.com
+https://secure.bank-login.com
+http://example123.com/login
+https://verify.payments.com
+http://normalwebsite.org
+http://verylongurl.com/path/path/path/path/path/path/path/path/path/path/path/path/path/path/path/path/path/path
+https://safe-site.dev
+https://mysite.com/account%2Flogin%3Dpage
+http://192.168.0.1/dashboard
+http://abc456.xyz
+https://trustedsite.edu
+http://login.malicious-site.ru
