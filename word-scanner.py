@@ -14,38 +14,27 @@ with open(args.f, "rt", encoding='utf-8') as f:
 
 word = args.w
 pattern = re.compile(rf'\b{re.escape(word.strip())}\b')
-matches = re.finditer(pattern,content)
+matches = list(re.finditer(pattern,content))
 
-try:
-    found = False
-    for match in matches:
-        if match:
-            found = True
-            userInput = input(f"There is a pattern for the word -> {Fore.GREEN}{match.group(0)}{Style.RESET_ALL} would you like to replace it? y/n ")
-            if userInput == "y":
-                chosenWord = input("please write the new word: ")
-                if(len(chosenWord.strip()) < 20):
-                    content = re.sub(rf'\b{re.escape(word.strip())}\b', chosenWord.strip(), content)
-                else:
-                    print("the new word is too long, max length in 20")
-                    sys.exit()
-            elif userInput == "n":
-                print('exiting...')
-                sys.exit()
-            else:
-                print("Invalid input. Please enter 'y' or 'n'.")
-                sys.exit()
-except KeyboardInterrupt as e:
-    print("exiting...")
-
-    
-if not found:
+if not matches:
     print(f"no pattern for the word {word}")
     sys.exit()
 
-with open(args.f, "w") as f:
-    f.write(content)
-
-if chosenWord and word:
-    print(f"The word {Fore.RED}{word}{Style.RESET_ALL} has been replaced with {Fore.GREEN}{chosenWord}{Style.RESET_ALL}")
-
+try:
+        userInput = input(f" the word {Fore.GREEN}{word.strip()}{Style.RESET_ALL} has been mentioned {len(matches)} times would you like to replace it? y/n ")
+        if userInput == "y":
+            chosenWord = input("please write the new word: ")
+            if(len(chosenWord.strip()) < 20):
+                    content = re.sub(rf'\b{re.escape(word.strip())}\b', chosenWord.strip(), content)
+            else:
+                print("the new word is too long, max length in 20")
+                sys.exit()
+        elif userInput == "n":
+            print('exiting...')
+            sys.exit()
+        else:
+            print("Invalid input. Please enter 'y' or 'n'.")
+            sys.exit()
+except KeyboardInterrupt as e:
+    print("exiting...")
+ 
