@@ -1,0 +1,82 @@
+# Default Security Rules for SIEM
+
+rules:
+  - id: "SSH_BRUTE_FORCE"
+    name: "SSH Brute Force Attempt"
+    description: "Multiple failed SSH login attempts detected"
+    severity: "high"
+    conditions:
+      message_pattern: "(Failed password|Failed publickey|Invalid user)"
+      threshold: 5
+      time_window: 300  # 5 minutes
+      group_by: "source_ip"
+    
+  - id: "PRIVILEGE_ESCALATION"
+    name: "Privilege Escalation Detected"
+    description: "User switched to root or used sudo"
+    severity: "medium"
+    conditions:
+      message_pattern: "(su:|sudo:|Successful su for|COMMAND=)"
+      
+  - id: "PORT_SCAN"
+    name: "Port Scan Activity"
+    description: "Multiple connection attempts to different ports"
+    severity: "high"
+    conditions:
+      message_pattern: "(Connection refused|Connection reset|SYN_RECV)"
+      threshold: 20
+      time_window: 60  # 1 minute
+      group_by: "source_ip"
+      
+  - id: "MALWARE_SIGNATURE"
+    name: "Potential Malware Activity"
+    description: "Suspicious process or file access detected"
+    severity: "critical"
+    conditions:
+      message_pattern: "(/tmp/\.|wget.*http|curl.*http|/dev/tcp/|nc -l)"
+      
+  - id: "AUTH_SUCCESS_AFTER_FAILURES"
+    name: "Successful Login After Multiple Failures"
+    description: "Successful authentication after failed attempts"
+    severity: "high"
+    conditions:
+      message_pattern: "(Accepted password|Accepted publickey)"
+      prerequisite_pattern: "Failed password"
+      prerequisite_count: 3
+      time_window: 600  # 10 minutes
+      
+  - id: "CONFIG_CHANGE"
+    name: "System Configuration Change"
+    description: "Critical system configuration file modified"
+    severity: "medium"
+    conditions:
+      message_pattern: "(/etc/passwd|/etc/shadow|/etc/sudoers|/etc/ssh/sshd_config)"
+      
+  - id: "FIREWALL_DENY"
+    name: "Firewall Denied Connection"
+    description: "Connection blocked by firewall rules"
+    severity: "low"
+    conditions:
+      message_pattern: "(DROPPED|REJECTED|DENY|BLOCK)"
+      
+  - id: "SERVICE_FAILURE"
+    name: "Critical Service Failure"
+    description: "System service crashed or failed to start"
+    severity: "high"
+    conditions:
+      message_pattern: "(failed|crashed|core dumped|segmentation fault)"
+      process_pattern: "(sshd|httpd|nginx|mysql|postgresql)"
+      
+  - id: "DISK_SPACE_CRITICAL"
+    name: "Disk Space Critical"
+    description: "Disk space usage above 90%"
+    severity: "high"
+    conditions:
+      message_pattern: "(disk full|No space left|above threshold)"
+      
+  - id: "UNAUTHORIZED_ACCESS"
+    name: "Unauthorized Access Attempt"
+    description: "Access denied to restricted resource"
+    severity: "medium"
+    conditions:
+      message_pattern: "(Permission denied|Access denied|Unauthorized|403 Forbidden)" 

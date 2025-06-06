@@ -1,0 +1,30 @@
+# SIEM Configuration File
+
+# Syslog Collector Settings
+syslog:
+  host: "0.0.0.0"
+  port: 514
+  buffer_size: 8192
+  encoding: "utf-8"
+
+# Database Settings
+database:
+  type: "sqlite"
+  path: "siem_data.db"
+  
+# Rule Engine Settings
+rule_engine:
+  rules_directory: "rule_engine/rules"
+  check_interval: 60  # seconds
+  
+# API Settings
+api:
+  host: "127.0.0.1"
+  port: 5000
+  debug: true
+  
+# Logging Settings
+logging:
+  level: "INFO"
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  file: "siem.log" 

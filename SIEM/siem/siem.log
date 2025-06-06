@@ -1,0 +1,81 @@
+2025-06-05 20:30:36 - __main__ - INFO - Configuration loaded from config/config.yaml
+2025-06-05 20:30:36 - __main__ - INFO - Initializing SIEM components...
+2025-06-05 20:30:36 - indexer.db_manager - INFO - Database initialized at siem_data.db
+2025-06-05 20:30:36 - rule_engine.rule_manager - ERROR - Error loading rule file rule_engine/rules\default_rules.yaml: while scanning a double-quoted scalar
+  in "rule_engine/rules\default_rules.yaml", line 36, column 24
+found unknown escape character '.'
+  in "rule_engine/rules\default_rules.yaml", line 36, column 32
+2025-06-05 20:30:36 - rule_engine.rule_manager - INFO - Loaded 0 rules
+2025-06-05 20:30:36 - __main__ - INFO - Starting SIEM components...
+2025-06-05 20:30:36 - indexer.db_manager - INFO - Database indexer started
+2025-06-05 20:30:37 - rule_engine.rule_manager - INFO - Rule engine started
+2025-06-05 20:30:37 - processors.log_parser - INFO - Log parser started
+2025-06-05 20:30:37 - api.platform_api - INFO - Starting API server on 127.0.0.1:5000
+2025-06-05 20:30:37 - __main__ - INFO - All components started. SIEM system is operational.
+2025-06-05 20:30:37 - collectors.syslog_collector - INFO - Syslog collector started on 0.0.0.0:514
+2025-06-05 20:43:19 - __main__ - INFO - Received signal 2, shutting down...
+2025-06-05 20:43:19 - __main__ - INFO - Stopping SIEM components...
+2025-06-05 20:43:19 - collectors.syslog_collector - INFO - Syslog collector stopped
+2025-06-05 20:43:19 - processors.log_parser - INFO - Log parser stopped
+2025-06-05 20:43:20 - rule_engine.rule_manager - INFO - Rule engine stopped
+2025-06-05 20:43:21 - indexer.db_manager - INFO - Database indexer stopped
+2025-06-05 20:43:21 - __main__ - INFO - SIEM system stopped.
+2025-06-05 20:43:25 - __main__ - INFO - Configuration loaded from config/config.yaml
+2025-06-05 20:43:25 - __main__ - INFO - Initializing SIEM components...
+2025-06-05 20:43:25 - indexer.db_manager - INFO - Database initialized at siem_data.db
+2025-06-05 20:43:25 - rule_engine.rule_manager - ERROR - Error loading rule file rule_engine/rules\default_rules.yaml: while scanning a double-quoted scalar
+  in "rule_engine/rules\default_rules.yaml", line 36, column 24
+found unknown escape character '.'
+  in "rule_engine/rules\default_rules.yaml", line 36, column 32
+2025-06-05 20:43:25 - rule_engine.rule_manager - INFO - Loaded 0 rules
+2025-06-05 20:43:25 - __main__ - INFO - Starting SIEM components...
+2025-06-05 20:43:25 - indexer.db_manager - INFO - Database indexer started
+2025-06-05 20:43:26 - rule_engine.rule_manager - INFO - Rule engine started
+2025-06-05 20:43:26 - processors.log_parser - INFO - Log parser started
+2025-06-05 20:43:26 - api.platform_api - INFO - Starting API server on 127.0.0.1:5000
+2025-06-05 20:43:26 - __main__ - INFO - All components started. SIEM system is operational.
+2025-06-05 20:43:26 - collectors.syslog_collector - INFO - Syslog collector started on 0.0.0.0:514
+2025-06-05 20:45:32 - __main__ - INFO - Received signal 2, shutting down...
+2025-06-05 20:45:32 - __main__ - INFO - Stopping SIEM components...
+2025-06-05 20:45:32 - collectors.syslog_collector - INFO - Syslog collector stopped
+2025-06-05 20:45:33 - processors.log_parser - INFO - Log parser stopped
+2025-06-05 20:45:34 - rule_engine.rule_manager - INFO - Rule engine stopped
+2025-06-05 20:45:35 - indexer.db_manager - INFO - Database indexer stopped
+2025-06-05 20:45:35 - __main__ - INFO - SIEM system stopped.
+2025-06-05 20:45:42 - __main__ - INFO - Configuration loaded from config/config.yaml
+2025-06-05 20:45:42 - __main__ - INFO - Initializing SIEM components...
+2025-06-05 20:45:42 - indexer.db_manager - INFO - Database initialized at siem_data.db
+2025-06-05 20:45:42 - rule_engine.rule_manager - ERROR - Error loading rule file rule_engine/rules\default_rules.yaml: while scanning a double-quoted scalar
+  in "rule_engine/rules\default_rules.yaml", line 36, column 24
+found unknown escape character '.'
+  in "rule_engine/rules\default_rules.yaml", line 36, column 32
+2025-06-05 20:45:42 - rule_engine.rule_manager - INFO - Loaded 0 rules
+2025-06-05 20:45:42 - __main__ - INFO - Starting SIEM components...
+2025-06-05 20:45:42 - indexer.db_manager - INFO - Database indexer started
+2025-06-05 20:45:43 - rule_engine.rule_manager - INFO - Rule engine started
+2025-06-05 20:45:43 - processors.log_parser - INFO - Log parser started
+2025-06-05 20:45:43 - api.platform_api - INFO - Starting API server on 127.0.0.1:5000
+2025-06-05 20:45:43 - __main__ - INFO - All components started. SIEM system is operational.
+2025-06-05 20:45:43 - collectors.syslog_collector - INFO - Syslog collector started on 0.0.0.0:514
+2025-06-05 20:51:01 - __main__ - INFO - Received signal 2, shutting down...
+2025-06-05 20:51:01 - __main__ - INFO - Stopping SIEM components...
+2025-06-05 20:51:01 - collectors.syslog_collector - INFO - Syslog collector stopped
+2025-06-05 20:51:01 - processors.log_parser - INFO - Log parser stopped
+2025-06-05 20:51:02 - rule_engine.rule_manager - INFO - Rule engine stopped
+2025-06-05 20:51:03 - indexer.db_manager - INFO - Database indexer stopped
+2025-06-05 20:51:03 - __main__ - INFO - SIEM system stopped.
+2025-06-05 20:51:24 - __main__ - INFO - Configuration loaded from config/config.yaml
+2025-06-05 20:51:24 - __main__ - INFO - Initializing SIEM components...
+2025-06-05 20:51:24 - indexer.db_manager - INFO - Database initialized at siem_data.db
+2025-06-05 20:51:24 - rule_engine.rule_manager - ERROR - Error loading rule file rule_engine/rules\default_rules.yaml: while scanning a double-quoted scalar
+  in "rule_engine/rules\default_rules.yaml", line 36, column 24
+found unknown escape character '.'
+  in "rule_engine/rules\default_rules.yaml", line 36, column 32
+2025-06-05 20:51:24 - rule_engine.rule_manager - INFO - Loaded 0 rules
+2025-06-05 20:51:24 - __main__ - INFO - Starting SIEM components...
+2025-06-05 20:51:24 - indexer.db_manager - INFO - Database indexer started
+2025-06-05 20:51:25 - rule_engine.rule_manager - INFO - Rule engine started
+2025-06-05 20:51:25 - processors.log_parser - INFO - Log parser started
+2025-06-05 20:51:25 - api.platform_api - INFO - Starting API server on 127.0.0.1:5000
+2025-06-05 20:51:25 - __main__ - INFO - All components started. SIEM system is operational.
+2025-06-05 20:51:25 - collectors.syslog_collector - INFO - Syslog collector started on 0.0.0.0:514

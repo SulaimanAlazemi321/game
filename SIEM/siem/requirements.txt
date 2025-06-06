@@ -1,0 +1,18 @@
+# SIEM System Requirements
+
+# Core dependencies
+pyyaml>=6.0
+flask>=2.3.0
+flask-cors>=4.0.0
+sqlalchemy>=2.0.0
+
+# Optional dependencies for production
+# gunicorn>=21.0.0  # For production WSGI server
+# redis>=4.5.0      # For caching and message queuing
+# celery>=5.3.0     # For distributed task processing
+
+# Development dependencies
+# pytest>=7.4.0
+# pytest-cov>=4.1.0
+# black>=23.0.0
+# flake8>=6.0.0 
