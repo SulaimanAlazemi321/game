@@ -1,0 +1,6 @@
+game:
+  min_number: 1
+  max_number: 100
+  mode: single
+  guesses: 5
+  
