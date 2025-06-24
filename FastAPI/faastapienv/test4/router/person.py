@@ -3,12 +3,17 @@ from sqlalchemy.orm import session
 from sqlalchemy.exc import SQLAlchemyError
 from model import Person
 from fastapi import APIRouter, Path, Query, Depends, HTTPException, status
+from fastapi.security import OAuth2PasswordRequestForm
 from pydantic import BaseModel, Field
 from typing import Optional, Annotated
 from passlib.context import CryptContext
+from jose import jwt
+from datetime import datetime, timezone, timedelta
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+pass_hasher = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
+SECERT_KEY = "abcdefg"
+ALGORITHM = "HS256"
 
 router = APIRouter()
 
@@ -68,7 +73,7 @@ async def addPerson(db: db_dependency, person: personSchema):
             email = person.email,
             name = person.name,
             age = person.age,
-            hashPassword = pwd_context.hash(person.password),
+            hashPassword = pass_hasher.hash(person.password),
             isActive = person.isActive,
             role = person.role
         )
@@ -89,7 +94,7 @@ async def updateDataByID(db : db_dependency, person : personSchema, personID : i
         foundperson.email = person.email
         foundperson.name = person.name
         foundperson.age = person.age
-        foundperson.hashPassword = pwd_context.hash(person.password)
+        foundperson.hashPassword = pass_hasher.hash(person.password)
         foundperson.isActive = person.isActive
         foundperson.role = person.role
 
@@ -111,3 +116,24 @@ async def deleteperson(db: db_dependency, personID : int):
     
     raise HTTPException(status_code=404, detail="person id not found")
 
+def authenticate_helper(username: str, password: str, db) -> bool:
+    user = db.query(Person).filter(username == Person.name).first()
+  
+    if user and pass_hasher.verify(password, user.hashPassword):
+        return True
+    else:
+        return False
+
+
+@router.get("/testing")
+def generateToken(username: str, usrID: str, timeToExpire : int):
+    expire = datetime.now(timezone.utc) + timedelta(minutes=timeToExpire)
+    encode = {"username": username, "userID": usrID,"expire": expire.isoformat()}
+    return jwt.encode(encode, SECERT_KEY, algorithm=ALGORITHM)
+
+@router.post("/authenticate_user")
+async def authenticate_user(db: db_dependency, form_data : Annotated[OAuth2PasswordRequestForm, Depends()]):
+    user = authenticate_helper(username=form_data.username, password=form_data.password, db=db)
+    if user == True:
+        return {"Authentication": "seccuss"}
+    return {"Authentication": "failed"}
