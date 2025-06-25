@@ -3,20 +3,28 @@ from sqlalchemy.orm import session
 from sqlalchemy.exc import SQLAlchemyError
 from model import Person
 from fastapi import APIRouter, Path, Query, Depends, HTTPException, status
-from fastapi.security import OAuth2PasswordRequestForm
+from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
 from pydantic import BaseModel, Field
 from typing import Optional, Annotated
 from passlib.context import CryptContext
-from jose import jwt
+from jose import jwt, JWTError
 from datetime import datetime, timezone, timedelta
 
 pass_hasher = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-SECERT_KEY = "abcdefg"
+router = APIRouter(
+    prefix="/person",
+    tags=["Person"]
+)
+
 ALGORITHM = "HS256"
+SECRET_KEY = "LoveBarrnyIsRealOhhSOOGOOD"
+auth_bearer = OAuth2PasswordBearer(tokenUrl="person/token")
 
-router = APIRouter()
 
+class Token(BaseModel):
+    access_token : str
+    token_type : str
 
 class personSchema(BaseModel):
     email: str = Field(min_length=4)
@@ -116,24 +124,40 @@ async def deleteperson(db: db_dependency, personID : int):
     
     raise HTTPException(status_code=404, detail="person id not found")
 
-def authenticate_helper(username: str, password: str, db) -> bool:
-    user = db.query(Person).filter(username == Person.name).first()
-  
-    if user and pass_hasher.verify(password, user.hashPassword):
-        return True
+
+
+def authenticateHelper(username: str, password: str, db):
+    person = db.query(Person).filter(username == Person.name).first()
+    if person and pass_hasher.verify(password, person.hashPassword):
+        return person
+    return False
+
+
+@router.post("/authenticate-user", response_model=Token)
+async def authenticateUser(db: db_dependency, from_data : Annotated[OAuth2PasswordRequestForm, Depends()]):
+    user  = authenticateHelper(username=from_data.username, password=from_data.password, db=db)
+    if user:
+        token = generateToken(username=user.name, id=user.id, deltatime=timedelta(minutes=20))
+        return {"access_token": token,"token_type": "bearer" }
     else:
-        return False
+     raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="not valid jwt")
 
 
-@router.get("/testing")
-def generateToken(username: str, usrID: str, timeToExpire : int):
-    expire = datetime.now(timezone.utc) + timedelta(minutes=timeToExpire)
-    encode = {"username": username, "userID": usrID,"expire": expire.isoformat()}
-    return jwt.encode(encode, SECERT_KEY, algorithm=ALGORITHM)
+def generateToken(username : str, id : str , deltatime: timedelta):
+    expire = datetime.now(timezone.utc) + deltatime
+    encode = {"sub": username, "id": id, "expire":expire.isoformat()}
+    return jwt.encode(algorithm=ALGORITHM, key=SECRET_KEY, claims=encode)
 
-@router.post("/authenticate_user")
-async def authenticate_user(db: db_dependency, form_data : Annotated[OAuth2PasswordRequestForm, Depends()]):
-    user = authenticate_helper(username=form_data.username, password=form_data.password, db=db)
-    if user == True:
-        return {"Authentication": "seccuss"}
-    return {"Authentication": "failed"}
+
+def tokenDecode(token : Annotated[str, Depends(auth_bearer)]):
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        username = payload.get("sub")
+        userID = payload.get("id")
+        if not username or not userID:
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="not valid jwt")
+        
+        return {"username": username, "id": userID}
+    except JWTError:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="not valid jwt")
+        

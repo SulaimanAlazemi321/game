@@ -6,7 +6,11 @@ from fastapi import APIRouter, Path, Query, Depends, HTTPException, status
 from pydantic import BaseModel, Field
 from typing import Optional, Annotated
 
-router = APIRouter()
+router = APIRouter(
+    prefix="/Car",
+    tags=["Car"]
+)
+
 
 
 class carSchema(BaseModel):
