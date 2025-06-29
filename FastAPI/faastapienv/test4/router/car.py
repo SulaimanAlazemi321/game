@@ -1,10 +1,18 @@
 from database import localSession
-from sqlalchemy.orm import session
+from sqlalchemy.orm import Session
 from sqlalchemy.exc import SQLAlchemyError
 from model import Car
 from fastapi import APIRouter, Path, Query, Depends, HTTPException, status
 from pydantic import BaseModel, Field
 from typing import Optional, Annotated
+from router.person import get_current_user
+
+
+
+user_dependency = Annotated[dict, Depends(get_current_user)]
+
+
+
 
 router = APIRouter(
     prefix="/Car",
@@ -12,20 +20,26 @@ router = APIRouter(
 )
 
 
+@router.get("/testing123")
+def usertest(user: user_dependency, name : str):
+    name1 = name
+    if user != None:
+        return {"username": user.get('username'), "id": user.get('id')}
+    else:
+        "authenticate first please"
+
 
 class carSchema(BaseModel):
     factory : str = Field(min_length=1, max_length=100)
     model : int = Field(lt=2027, gt= 1900)
     isEcoFrindly : bool 
-    person : Optional[int] = Field(gt=0)
-
     model_config = {
         "json_schema_extra": {
             "example": {
                 "factory": "Toyota",
                 "model": 2010,
                 "isEcoFrindly": True,
-                "person": 1
+
             }
         }
     }
@@ -37,7 +51,7 @@ def get_db():
     finally:
         db.close()
 
-db_dependency = Annotated[session, Depends(get_db)]
+db_dependency = Annotated[Session, Depends(get_db)]
 
 
 @router.get("/getAllCars")
@@ -45,9 +59,10 @@ async def getAllData(db : db_dependency):
     return db.query(Car).all()
 
 
-@router.get("/getCarByID/{carID}")
-async def getCarByID(db : db_dependency, carID : int = Path(gt=0)):
-    car =  db.query(Car).filter(carID == Car.id).first()
+@router.get("/getAllMyCars/")
+async def getCarByID(db : db_dependency,user: user_dependency):
+    car =  db.query(Car).filter(user.get("id") == Car.person).all()
+    
     if car:
         return car
     elif not car:
@@ -58,9 +73,9 @@ async def getCarByID(db : db_dependency, carID : int = Path(gt=0)):
 
 
 @router.post("/addCar", status_code = status.HTTP_201_CREATED)
-async def addData(db: db_dependency, car: carSchema):
+async def addData(db: db_dependency, car: carSchema, user: user_dependency):
     try:
-        new_data = Car(**car.model_dump())
+        new_data = Car(**car.model_dump(), person = user.get("id"))
         db.add(new_data)
         db.commit()
         return {"Seccuss": "Car added"}

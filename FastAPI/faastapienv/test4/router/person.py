@@ -1,5 +1,5 @@
 from database import localSession
-from sqlalchemy.orm import session
+from sqlalchemy.orm import Session
 from sqlalchemy.exc import SQLAlchemyError
 from model import Person
 from fastapi import APIRouter, Path, Query, Depends, HTTPException, status
@@ -54,7 +54,7 @@ def get_db():
     finally:
         db.close()
 
-db_dependency = Annotated[session, Depends(get_db)]
+db_dependency = Annotated[Session, Depends(get_db)]
 
 
 @router.get("/getAllpersons")
@@ -75,7 +75,7 @@ async def getpersonByID(db : db_dependency, personID : int = Path(gt=0)):
 
 
 @router.post("/addperson", status_code = status.HTTP_201_CREATED)
-async def addPerson(db: db_dependency, person: personSchema):
+async def access_tokenaddPerson(db: db_dependency, person: personSchema):
     try:
         new_data = Person(
             email = person.email,
@@ -126,38 +126,48 @@ async def deleteperson(db: db_dependency, personID : int):
 
 
 
-def authenticateHelper(username: str, password: str, db):
-    person = db.query(Person).filter(username == Person.name).first()
-    if person and pass_hasher.verify(password, person.hashPassword):
-        return person
-    return False
+'''
+4 functions that I need
+
+1- authenticate helper -> bool or user
+2- jwt encode -> jwt
+3- authenticate to use function 1 - 2
+4- jwt decode
+'''
 
 
-@router.post("/authenticate-user", response_model=Token)
-async def authenticateUser(db: db_dependency, from_data : Annotated[OAuth2PasswordRequestForm, Depends()]):
-    user  = authenticateHelper(username=from_data.username, password=from_data.password, db=db)
-    if user:
-        token = generateToken(username=user.name, id=user.id, deltatime=timedelta(minutes=20))
-        return {"access_token": token,"token_type": "bearer" }
+def authenticate_helper(username : str, password: str, db):
+    user = db.query(Person).filter(username == Person.name).first()
+    if user and pass_hasher.verify(password, user.hashPassword):
+        return user
     else:
-     raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="not valid jwt")
+        return False
+    
+
+def jwtGenerate(username: str, id: int):
+    expire = datetime.now(timezone.utc) + timedelta(minutes=20)
+    encode = {"sub": username, "id": id, "expire": expire.isoformat()}
+    jwt_token = jwt.encode(algorithm=ALGORITHM, key=SECRET_KEY,claims=encode)
+    return jwt_token
+
+@router.post("/token", response_model=Token)
+async def get_token(form_data : Annotated[OAuth2PasswordRequestForm, Depends()], db: db_dependency):
+    user = authenticate_helper(form_data.username, form_data.password, db)
+    if user:
+        jwt_token = jwtGenerate(user.name, user.id)
+        return {"access_token": jwt_token, "token_type": "Bearer"}
+    elif user == False:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="not valid jwt")
+    
 
 
-def generateToken(username : str, id : str , deltatime: timedelta):
-    expire = datetime.now(timezone.utc) + deltatime
-    encode = {"sub": username, "id": id, "expire":expire.isoformat()}
-    return jwt.encode(algorithm=ALGORITHM, key=SECRET_KEY, claims=encode)
-
-
-def tokenDecode(token : Annotated[str, Depends(auth_bearer)]):
+def get_current_user(token : Annotated[str, Depends(auth_bearer)]):
     try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        username = payload.get("sub")
-        userID = payload.get("id")
-        if not username or not userID:
+        jwt_token = jwt.decode(token=token, algorithms=ALGORITHM, key=SECRET_KEY)
+        username = jwt_token.get("sub") 
+        id = jwt_token.get("id") 
+        if not username or not id:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="not valid jwt")
-        
-        return {"username": username, "id": userID}
+        return {"username": username, "id": id}
     except JWTError:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="not valid jwt")
-        
