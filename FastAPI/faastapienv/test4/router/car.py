@@ -8,10 +8,7 @@ from typing import Optional, Annotated
 from router.person import get_current_user
 
 
-
 user_dependency = Annotated[dict, Depends(get_current_user)]
-
-
 
 
 router = APIRouter(
@@ -20,13 +17,6 @@ router = APIRouter(
 )
 
 
-@router.get("/testing123")
-def usertest(user: user_dependency, name : str):
-    name1 = name
-    if user != None:
-        return {"username": user.get('username'), "id": user.get('id')}
-    else:
-        "authenticate first please"
 
 
 class carSchema(BaseModel):
@@ -86,29 +76,35 @@ async def addData(db: db_dependency, car: carSchema, user: user_dependency):
 
 
 @router.put("/updateCar/")
-async def updateDataByID(db : db_dependency, car : carSchema, carID : int = Query(gt=0)):
+async def updateDataByID(db : db_dependency, car : carSchema, user: user_dependency, carID : int = Query(gt=0)):
     foundCar = db.query(Car).filter(carID == Car.id).first()
 
-    if foundCar:
-        foundCar.model = car.model
-        foundCar.factory = car.factory
-        foundCar.isEcoFrindly = car.isEcoFrindly
-
-
-        db.add(foundCar)
-        db.commit()
-        return {"seccuss": "car updated"}
+    if foundCar is None:
+        raise HTTPException(status_code=404, detail="car ID not found")
+    elif foundCar.person != user.get("id"):
+        raise HTTPException(status_code=401, detail="you don't own the car")
     
-    raise HTTPException(status_code=404, detail="car ID not found")
+
+    foundCar.model = car.model
+    foundCar.factory = car.factory
+    foundCar.isEcoFrindly = car.isEcoFrindly
+    db.add(foundCar)
+    db.commit()
+    return {"seccuss": "car updated"}
 
 
 @router.delete("/DeleteCar/{carID}")
-async def deleteCar(db: db_dependency, carID : int):
-    foundcar = db.query(Car).filter(Car.id == carID).first()
-    if foundcar:
-        db.delete(foundcar)
-        db.commit()
-        return {"seccuss": "car deleted"}
+async def deleteCar(db: db_dependency, carID : int, user: user_dependency):
+    foundCar = db.query(Car).filter(Car.id == carID).first()
+
+    if foundCar is None:
+            raise HTTPException(status_code=404, detail="car ID not found")
+    elif foundCar.person != user.get("id"):
+        raise HTTPException(status_code=401, detail="you don't own the car")
+
+    db.delete(foundCar)
+    db.commit()
     
-    raise HTTPException(status_code=404, detail="car id not found")
+    
+    
 
