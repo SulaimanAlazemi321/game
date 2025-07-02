@@ -9,6 +9,7 @@ from typing import Optional, Annotated
 from passlib.context import CryptContext
 from jose import jwt, JWTError
 from datetime import datetime, timezone, timedelta
+from sqlalchemy import text
 
 pass_hasher = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -34,6 +35,7 @@ class personSchema(BaseModel):
     password: str
     isActive: Optional[bool] = True
     role: str
+    phone_number : str
 
     model_config = {
             "json_schema_extra": {
@@ -44,7 +46,8 @@ class personSchema(BaseModel):
                     "age": 25,
                     "password": "hashed_password_here",
                     "isActive": True,
-                    "role": "admin"
+                    "role": "admin",
+                    "phone_number":  "51590622"
                 }
             }
         }
@@ -97,7 +100,8 @@ async def access_tokenaddPerson(db: db_dependency, person: personSchema):
             age = person.age,
             hashPassword = pass_hasher.hash(person.password),
             isActive = person.isActive,
-            role = person.role
+            role = person.role,
+            phone_number = person.phone_number
         )
         db.add(new_data)
         db.commit()
@@ -112,20 +116,30 @@ async def access_tokenaddPerson(db: db_dependency, person: personSchema):
 async def updateDataByID(db : db_dependency, person : personSchema, personID : int = Query(gt=0)):
     foundperson = db.query(Person).filter(personID == Person.id).first()
 
-    if foundperson:
-        foundperson.email = person.email
-        foundperson.name = person.name
-        foundperson.age = person.age
-        foundperson.hashPassword = pass_hasher.hash(person.password)
-        foundperson.isActive = person.isActive
-        foundperson.role = person.role
+    if not foundperson:
+        raise HTTPException(status_code=404, detail="person ID not found")
+    name_conflict = db.query(Person).filter(Person.name == person.name, Person.id != personID).first()
+    email_conflict = db.query(Person).filter(Person.email == person.email, Person.id != personID).first()
+
+    if name_conflict:
+        raise HTTPException(status_code=400, detail="Name already exists")
+    if email_conflict:
+        raise HTTPException(status_code=400, detail="Email already exists")
+   
+    foundperson.email = person.email
+    foundperson.name = person.name
+    foundperson.age = person.age
+    foundperson.hashPassword = pass_hasher.hash(person.password)
+    foundperson.isActive = person.isActive
+    foundperson.role = person.role
+    foundperson.phone_number = person.phone_number
 
 
-        db.add(foundperson)
-        db.commit()
-        return {"seccuss": "person updated"}
+    db.add(foundperson)
+    db.commit()
+    return {"seccuss": "person updated"}
     
-    raise HTTPException(status_code=404, detail="person ID not found")
+    
 
 
 @router.delete("/Deleteperson/{personID}")
@@ -156,6 +170,7 @@ def authenticate_helper(username : str, password: str, db):
     else:
         return False
     
+
 
 def jwtGenerate(username: str, id: int, role: str):
     expire = datetime.now(timezone.utc) + timedelta(minutes=2000)
@@ -214,4 +229,19 @@ async def updatePassword(db: db_dependency, user: user_dependency, newPassword: 
     
     theUser.hashPassword =  pass_hasher.hash(newPassword)
     db.commit()
+
+
+
+@router.put("/update-phone-number")
+def update_phone_number(user : user_dependency, db : db_dependency, newNumber : str):
+    theUser = db.query(Person).filter(user.get("id") == Person.id).first()
+    if theUser:
+        theUser.phone_number = newNumber
+        db.commit()
+        return "succuss"
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+    
+
+
+
 

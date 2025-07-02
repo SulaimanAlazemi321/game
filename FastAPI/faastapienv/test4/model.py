@@ -19,5 +19,7 @@ class Person(base):
     hashPassword = Column(String)
     isActive = Column(Boolean, default=True)
     role = Column(String)
+    phone_number = Column(String)
+
        
 
