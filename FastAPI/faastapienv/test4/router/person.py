@@ -2,15 +2,17 @@ from database import localSession
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import SQLAlchemyError
 from model import Person
-from fastapi import APIRouter, Path, Query, Depends, HTTPException, status
+from fastapi import APIRouter, Path, Query, Depends, HTTPException, status, Request
 from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
 from pydantic import BaseModel, Field
+from fastapi.templating import Jinja2Templates
 from typing import Optional, Annotated
 from passlib.context import CryptContext
 from jose import jwt, JWTError
 from datetime import datetime, timezone, timedelta
 from sqlalchemy import text
 
+template = Jinja2Templates(directory="templates")
 pass_hasher = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 router = APIRouter(
@@ -52,7 +54,7 @@ class personSchema(BaseModel):
             }
         }
  
-
+Jinja2Templates
 
 class UserOut(BaseModel):
     id: int
@@ -242,6 +244,15 @@ def update_phone_number(user : user_dependency, db : db_dependency, newNumber : 
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
     
 
+#pages  
+
+@router.get("/login")
+async def login(request: Request):
+    return template.TemplateResponse("login.html", {"request": request})
+
+@router.get("/home")
+async def test(request : Request):
+    return template.TemplateResponse("home.html", {"request": request})
 
 
 

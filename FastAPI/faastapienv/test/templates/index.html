@@ -1,0 +1,17 @@
+<!-- templates/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Reflection Journal</title>
+</head>
+<body>
+  <h2>{{ question.text }}</h2>
+
+  <form action="/submit" method="post">
+    <input type="hidden" name="question_id" value="{{ question.id }}">
+    <textarea name="answer_text" rows="5" cols="60" placeholder="Your answer…"></textarea><br>
+    <button type="submit">Save</button>
+  </form>
+</body>
+</html>
