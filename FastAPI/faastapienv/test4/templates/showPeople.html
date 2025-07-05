@@ -1,0 +1,6 @@
+{% include 'layout.html'%}
+{% if users %}
+{% for user in users%}
+<h1>hello {{user.name}}</h1>
+{%endfor%}
+{%endif%}

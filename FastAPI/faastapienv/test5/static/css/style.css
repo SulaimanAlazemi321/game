@@ -1,0 +1,86 @@
+/* --- royal palette --- */
+:root {
+  --royal-purple: #4b1482;
+  --imperial-gold:  #d4af37;
+  --snow-white:     #f9f9f9;
+}
+
+/* general */
+body {
+  margin: 0;
+  font-family: "Playfair Display", serif;
+  background: var(--snow-white);
+  color: var(--royal-purple);
+}
+
+/* hero banner */
+.hero {
+  position: relative;
+  height: 35vh;
+  background: url('/static/css/crown-pattern.svg') center/cover,
+              linear-gradient(120deg, var(--royal-purple), #311056);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+.hero .overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,.25);
+}
+.hero .title {
+  position: relative;
+  z-index: 1;
+  color: var(--imperial-gold);
+  letter-spacing: 2px;
+  font-size: 2.8rem;
+  text-shadow: 0 2px 6px rgba(0,0,0,.5);
+}
+
+/* card */
+.card {
+  width: min(90%, 500px);
+  margin: -4rem auto 4rem;
+  padding: 2.5rem 2rem;
+  background: #fff;
+  border: 2px solid var(--imperial-gold);
+  border-radius: 20px;
+  box-shadow: 0 10px 25px rgba(0,0,0,.15);
+}
+
+/* form */
+.form .field {
+  display: flex;
+  flex-direction: column;
+  gap: .4rem;
+  margin-bottom: 1.2rem;
+}
+.form input,
+.form select {
+  padding: .6rem .8rem;
+  border: 1px solid var(--royal-purple);
+  border-radius: 8px;
+  font-size: .95rem;
+}
+.form input:focus,
+.form select:focus {
+  outline: none;
+  border-color: var(--imperial-gold);
+  box-shadow: 0 0 0 2px rgba(212,175,55,.35);
+}
+
+/* button */
+.btn {
+  width: 100%;
+  padding: .75rem 1.2rem;
+  background: var(--imperial-gold);
+  border: none;
+  border-radius: 10px;
+  color: var(--royal-purple);
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: transform .2s ease;
+}
+.btn:hover { transform: translateY(-2px); }

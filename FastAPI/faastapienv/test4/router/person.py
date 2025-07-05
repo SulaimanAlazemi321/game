@@ -2,7 +2,7 @@ from database import localSession
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import SQLAlchemyError
 from model import Person
-from fastapi import APIRouter, Path, Query, Depends, HTTPException, status, Request
+from fastapi import APIRouter, Path, Query, Depends, HTTPException, status, Request, Form
 from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
 from pydantic import BaseModel, Field
 from fastapi.templating import Jinja2Templates
@@ -23,7 +23,6 @@ router = APIRouter(
 ALGORITHM = "HS256"
 SECRET_KEY = "LoveBarrnyIsRealOhhSOOGOOD"
 auth_bearer = OAuth2PasswordBearer(tokenUrl="person/token")
-
 
 
 class Token(BaseModel):
@@ -250,9 +249,50 @@ def update_phone_number(user : user_dependency, db : db_dependency, newNumber : 
 async def login(request: Request):
     return template.TemplateResponse("login.html", {"request": request})
 
-@router.get("/home")
-async def test(request : Request):
-    return template.TemplateResponse("home.html", {"request": request})
+@router.get("/")
+async def test(request : Request, username : Optional[str] = None):
+    return template.TemplateResponse("home.html", {"request": request, "username": username})
 
+
+
+@router.get("/all")
+async def getAllUsers(req: Request, db: db_dependency):
+    users = await getAllData(db)
+    return template.TemplateResponse("/showPeople.html", {"request": req, "users": users})
+
+@router.get("/add")
+async def test(request : Request):
+    return template.TemplateResponse("addperson.html", {"request": request})
+
+
+@router.post("/add")
+async def add_person(
+    request: Request,
+    db: db_dependency,
+    name: str = Form(...),
+    email: str = Form(...),
+    age: int = Form(...),
+    password: str = Form(...),
+    role: str = Form(...),
+    phone_number: str = Form(...)
+):
+    try:
+        person = Person(
+            name=name,
+            email=email,
+            age=age,
+            hashPassword=pass_hasher.hash(password),
+            role=role,
+            phone_number=phone_number,
+            isActive=True
+        )
+        db.add(person)
+        db.commit()
+        message = "Person added successfully"
+    except Exception:
+        db.rollback()
+        message = "Error adding person"
+
+    return template.TemplateResponse("addperson.html", {"request": request, "message": message})
 
 
